@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Lista hotela</title>
+    <style>
+        body { font-family: sans-serif; margin: 24px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f2f2f2; }
+        .badge { background:#eee; padding:2px 6px; margin-right:6px; border-radius:4px; display:inline-block;}
+        nav a { margin-right: 12px; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/hotels">Hotels</a>
+    <a href="/rooms">Rooms</a>
+    <a href="/akcija">Lights-Camera</a>
+</nav>
+
+<h2>Hotels</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th><th>Name</th><th>Kapacitet</th><th>Stars</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${hotels}">
+
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.name}"></td>
+        <td th:text="${c.kapacitet}"></td>
+        <td th:text="${c.stars}"></td>
+        <td>
+    <span th:each="t : ${c.tools}" class="badge" style="margin-bottom: 6px; display: inline-block;">
+        <span th:text="${t.name} + ' (+' + ${t.powerBoost} + ' PWR, +' + ${t.lifeBoost} + ' HP)'"></span>
+
+        <form th:action="@{/tools/sell}" method="post" style="display:inline; margin-left:4px;">
+            <input type="hidden" name="characterId" th:value="${c.id}" />
+            <input type="hidden" name="toolId" th:value="${t.id}" />
+            <button type="submit" style="font-size: 11px; cursor: pointer;">Prodaj</button>
+        </form>
+        <form th:if="${c.hasElixir() and (t.name.toLowerCase().contains('mač') or t.name.toLowerCase().contains('koplje')) and !t.name.startsWith('Začarani')}"
+              th:action="@{/tools/enchant}"
+              method="post"
+              style="display:inline; margin-left:4px;">
+            <input type="hidden" name="characterId" th:value="${c.id}" />
+            <input type="hidden" name="toolId" th:value="${t.id}" />
+            <button type="submit" style="font-size: 11px; cursor: pointer; background-color: #d4edda; border: 1px solid #c3e6cb;">Začaraj</button>
+        </form>
+    </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
