@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="bs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hoteli</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<nav>
+    <span class="brand">Hotel &amp; Room</span>
+    <a th:href="@{/a}" class="active">Hoteli</a>
+    <a th:href="@{/b}">Sobe</a>
+</nav>
+
+<main>
+    <h1>Hoteli</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Naziv</th>
+            <th>Grad</th>
+            <th>Zvjezdice</th>
+            <th>Adresa</th>
+            <th>Slobodne sobe</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="hotel : ${hotels}">
+            <td th:text="${hotel.name}">Naziv</td>
+            <td th:text="${hotel.city}">Grad</td>
+            <td class="stars" th:text="${'★'.repeat(hotel.stars)}">★★★</td>
+            <td th:text="${hotel.address}">Adresa</td>
+            <!-- Prikaz relacije 1:N: broj soba koje pripadaju hotelu -->
+            <td th:text="${hotel.freeRoomsCount} + ' / ' + ${#lists.size(hotel.rooms)}">2 / 3</td>
+            <td>
+                <a class="btn" th:href="@{/a/action/{id}(id=${hotel.id})}">Rezerviši sobu</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(hotels)}">
+            <td colspan="6" class="empty">Nema hotela u sistemu.</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

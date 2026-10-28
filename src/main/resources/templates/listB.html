@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="bs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sobe</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<nav>
+    <span class="brand">Hotel &amp; Room</span>
+    <a th:href="@{/a}">Hoteli</a>
+    <a th:href="@{/b}" class="active">Sobe</a>
+</nav>
+
+<main>
+    <h1>Sobe</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Broj sobe</th>
+            <th>Tip</th>
+            <th>Kapacitet</th>
+            <th>Cijena / noć</th>
+            <th>Hotel</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="room : ${rooms}">
+            <td th:text="${room.roomNumber}">101</td>
+            <td th:text="${room.type}">Double</td>
+            <td th:text="${room.capacity}">2</td>
+            <td th:text="${#numbers.formatDecimal(room.pricePerNight, 1, 2)} + ' KM'">100,00 KM</td>
+            <!-- Prikaz relacije N:1: svaka soba pokazuje hotel kojem pripada -->
+            <td>
+                <a th:href="@{/a/action/{id}(id=${room.hotel.id})}"
+                   th:text="${room.hotel.name}">Hotel</a>
+            </td>
+            <td>
+                <span th:if="${room.booked}" class="badge booked">Zauzeta</span>
+                <span th:unless="${room.booked}" class="badge free">Slobodna</span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rooms)}">
+            <td colspan="6" class="empty">Nema soba u sistemu.</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

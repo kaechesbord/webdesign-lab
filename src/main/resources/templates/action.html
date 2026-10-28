@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="bs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Rezervacija - ' + ${hotel.name}">Rezervacija</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<nav>
+    <span class="brand">Hotel &amp; Room</span>
+    <a th:href="@{/a}">Hoteli</a>
+    <a th:href="@{/b}">Sobe</a>
+</nav>
+
+<main>
+    <h1 th:text="${hotel.name}">Naziv hotela</h1>
+
+    <div class="info-box">
+        <span class="stars" th:text="${'★'.repeat(hotel.stars)}">★★★★</span>
+        <p>
+            <span th:text="${hotel.address}">Adresa</span>,
+            <span th:text="${hotel.city}">Grad</span>
+        </p>
+        <p>
+            Slobodno soba:
+            <strong th:text="${hotel.freeRoomsCount} + ' od ' + ${#lists.size(hotel.rooms)}">2 od 3</strong>
+        </p>
+    </div>
+
+    <h2>Sobe u ovom hotelu</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Broj sobe</th>
+            <th>Tip</th>
+            <th>Kapacitet</th>
+            <th>Cijena / noć</th>
+            <th>Rezervacija</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="room : ${hotel.rooms}">
+            <td th:text="${room.roomNumber}">101</td>
+            <td th:text="${room.type}">Double</td>
+            <td th:text="${room.capacity}">2</td>
+            <td th:text="${#numbers.formatDecimal(room.pricePerNight, 1, 2)} + ' KM'">100,00 KM</td>
+            <td>
+                <!-- Slobodna soba: forma za rezervaciju -->
+                <form th:unless="${room.booked}" class="inline"
+                      th:action="@{/b/book/{id}(id=${room.id})}" method="post">
+                    <input type="text" name="guestName" placeholder="Ime gosta" required>
+                    <button type="submit" class="btn">Rezerviši</button>
+                </form>
+
+                <!-- Zauzeta soba: ime gosta + dugme za otkazivanje -->
+                <form th:if="${room.booked}" class="inline"
+                      th:action="@{/b/cancel/{id}(id=${room.id})}" method="post">
+                    <span class="badge booked" th:text="'Rezervisao/la: ' + ${room.guestName}">Gost</span>
+                    <button type="submit" class="btn danger">Otkaži</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(hotel.rooms)}">
+            <td colspan="5" class="empty">Ovaj hotel trenutno nema soba.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p><a th:href="@{/a}">← Nazad na listu hotela</a></p>
+</main>
+</body>
+</html>
